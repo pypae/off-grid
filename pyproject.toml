@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "off-grid"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Patrick Düggelin", email = "patrick.dueggelin@live.de" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "streamlit",
+  "streamlit-folium",
+  "folium",
+  "requests",
+  "pyproj",
+  "matplotlib",
+  "rasterio",
+  "numpy",
+  "pydelatin >= 0.2.8",
+  "shapely",
+  "pyinstrument",
+]
+
+[project.urls]
+Documentation = "https://github.com/Patrick Düggelin/off-grid#readme"
+Issues = "https://github.com/Patrick Düggelin/off-grid/issues"
+Source = "https://github.com/Patrick Düggelin/off-grid"
+
+[tool.hatch.version]
+path = "src/off_grid/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/off_grid tests}"
+
+[tool.coverage.run]
+source_pkgs = ["off_grid", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/off_grid/__about__.py",
+]
+
+[tool.coverage.paths]
+off_grid = ["src/off_grid", "*/off-grid/src/off_grid"]
+tests = ["tests", "*/off-grid/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
