@@ -9,36 +9,13 @@ import rasterio.transform
 Location = tuple[int, int]
 
 here = Path(__file__).parent
-cat_path = here / "../../data/avi-10.tif"
+cat_path = here / "../../data/avi.tif"
 
 
-def compute_centrality_grid(rows: int, cols: int) -> np.ndarray:
-    # Compute centrality values for each cell
-    center_row = rows / 2
-    center_col = cols / 2
-    centrality = np.zeros((rows, cols), dtype=np.float32)
-    for i in range(rows):
-        for j in range(cols):
-            # Centrality is higher closer to the center
-            centrality[i, j] = 1.0 - (abs(i - center_row) + abs(j - center_col)) / (
-                center_row + center_col
-            )
-    return centrality
-
-
-def heuristic(
-    a: Location,
-    b: Location,
-    centrality_grid: np.ndarray,
-    centrality_weight: float = 1.0,
-) -> float:
+def heuristic(a: Location, b: Location) -> float:
     (x1, y1) = a
     (x2, y2) = b
-    h = abs(x1 - x2) + abs(y1 - y2)  # Manhattan distance
-    # Incorporate centrality
-    centrality = centrality_grid[x1, y1]
-    # Adjust heuristic
-    return h - centrality_weight * centrality
+    return abs(x1 - x2) + abs(y1 - y2)
 
 
 def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
@@ -49,31 +26,21 @@ def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
 
     def is_inbounds(pixel: Location) -> bool:
         row, col = pixel
-        nrows, ncols = grid.shape
+        _, nrows, ncols = grid.shape
         return 0 <= row < nrows and 0 <= col < ncols
 
     result = filter(is_inbounds, neighbors)
+
     return list(result)
 
 
 def cost(current: Location, next: Location, grid: np.ndarray) -> float:
-    row, col = next
-    # Ensure indices are within bounds
-    nrows, ncols = grid.shape
-    if 0 <= row < nrows and 0 <= col < ncols:
-        feature = grid[row, col]
-        return feature.item()
-    else:
-        return float("inf")  # Return infinite cost for out-of-bounds
+    col, row = next
+    features = grid[:, col, row]
+    return features.item()
 
 
-def a_star_search(
-    grid: np.ndarray,
-    start: Location,
-    goal: Location,
-    centrality_grid: np.ndarray,
-    centrality_weight: float = 1.0,
-):
+def a_star_search(grid: np.ndarray, start: Location, goal: Location):
     frontier: list[tuple[float, Location]] = []
     heapq.heappush(frontier, (0, start))
     came_from: dict[Location, tuple[Location | None, float]] = {start: (None, 0)}
@@ -88,13 +55,11 @@ def a_star_search(
         for next in neighbors(current, grid):
             new_cost = cost_so_far + cost(current, next, grid)
             if next not in came_from or new_cost < came_from[next][1]:
-                came_from[next] = (current, new_cost)
-                priority = new_cost + heuristic(
-                    next, goal, centrality_grid, centrality_weight
-                )
+                came_from[next] = current, new_cost
+                priority = new_cost + heuristic(next, goal)
                 heapq.heappush(frontier, (priority, next))
 
-    return came_from
+    return came_from, cost_so_far
 
 
 def reconstruct_path(
@@ -108,30 +73,24 @@ def reconstruct_path(
         return []
     while current is not None:
         path.append(current)
-        current = came_from[current][0]
+        current, cost = came_from[current]
     path.reverse()  # optional
     return path
 
 
 def compute_path(start: Location, end: Location) -> list[Location]:
     with rasterio.open(cat_path) as i:
-        cat_data = i.read(1)  # Read the first band
+        cat_data = i.read()
         transform = i.transform
-        nrows, ncols = cat_data.shape
-
-    # Compute centrality grid
-    centrality_grid = compute_centrality_grid(nrows, ncols)
 
     # From coordinates, get the pixel units of the start and end points.
     s = rasterio.transform.rowcol(transform, *start)
     e = rasterio.transform.rowcol(transform, *end)
 
-    came_from = a_star_search(cat_data, s, e, centrality_grid)
+    came_from, _ = a_star_search(cat_data, s, e)
     shortest_path = reconstruct_path(came_from, s, e)
 
     # Transform the path from pixel units back to coordinates.
-    shortest_path_coords = [
-        rasterio.transform.xy(transform, x, y) for x, y in shortest_path
-    ]
+    shortest_path = [rasterio.transform.xy(transform, x, y) for x, y in shortest_path]
 
-    return shortest_path_coords
+    return shortest_path
