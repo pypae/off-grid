@@ -7,38 +7,10 @@ import requests
 from pyproj import Transformer
 from shapely import LineString
 
-from off_grid.pathfinding.graph.altitude_mesh import SwissTopoMesh
-from off_grid.pathfinding.types import Location
+from off_grid.pathfinding import Location
 
 
-def write_mesh_path(graph: SwissTopoMesh, shortest_path: list[Location]):
-    """
-    Helper to export the shortest path as a vtk mesh
-    that can then be viewed together with the source mesh (e.g. in ParaView)
-    for debugging purposes.
-    """
-    neighbors = graph.graph[shortest_path[0]]
-    points = []
-    lines = []
-    i = 0
-    for point in shortest_path[1:]:
-        d, h, data = neighbors[point]
-        if data is not None:
-            points.append(data)
-            lines.append((i, i + 1))
-            i += 1
-
-        neighbors = graph.graph[point]
-
-    cells = [("line", lines)]
-    mesh = meshio.Mesh(points, cells)
-
-    here = Path(__file__).parent
-    output_file = here / "path.vtk"
-    mesh.write(str(output_file))
-
-
-def smooth_line(coords: list[Location], tolerance=0.001):
+def smooth_line(coords: list[Location], tolerance=0.0005):
     """Smooth a ragged shortest path"""
     line = LineString(coords)
     simplified_line = line.simplify(tolerance=tolerance)
