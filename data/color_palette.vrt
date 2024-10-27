@@ -1,0 +1,17 @@
+<VRTDataset rasterXSize="226" rasterYSize="271">
+    <VRTRasterBand dataType="Byte" band="1">
+        <ColorInterp>Palette</ColorInterp>
+        <ColorTable>
+            <Entry c1="0" c2="0" c3="0" c4="0"/> <!-- Transparent, no avalanche danger -->
+            <Entry c1="244" c2="243" c3="124" c4="192"/> <!-- Light yellow, 3+ avalanche runout -->
+            <Entry c1="124" c2="215" c3="251" c4="192"/> <!-- Light blue, avalanche runout, remote trigger low -->
+            <Entry c1="50" c2="143" c3="252" c4="192"/> <!-- Dark blue, avalanche runout, remote trigger medium -->
+            <Entry c1="247" c2="147" c3="191" c4="192"/> <!-- Pink, trigger potential 0.1 -->
+            <Entry c1="240" c2="128" c3="82" c4="192"/> <!-- Orange, trigger potential 0.25 -->
+            <Entry c1="220" c2="43" c3="43" c4="192"/> <!-- Red, trigger potential 0.5 -->
+            <Entry c1="114" c2="0" c3="0" c4="192"/> <!-- Dark red, trigger potential 1.0 -->
+            <Entry c1="104" c2="104" c3="104" c4="192"/> <!-- Gray, extreme terrain, > 50 degree -->
+            <Entry c1="50" c2="50" c3="50" c4="192"/> <!-- Dark gray, extreme terrain, > 60 degree -->
+        </ColorTable>
+    </VRTRasterBand>
+</VRTDataset>
