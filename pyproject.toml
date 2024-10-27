@@ -36,6 +36,8 @@ dependencies = [
   "pydelatin >= 0.2.8",
   "shapely",
   "pyinstrument",
+  "gdal",
+  "owslib",
 ]
 
 [project.urls]
