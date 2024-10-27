@@ -4,8 +4,8 @@ import numpy as np
 import rasterio
 
 here = Path(__file__).parent
-in_path = here / "../data/cat.tif"
-out_path = here / "../data/avi.tif"
+in_path = here / "../data/cat-10.tif"
+out_path = here / "../data/ncat-10.tif"
 
 expected_colors = np.array(
     [
