@@ -1,1 +1,11 @@
+# Python
+# ------
+
 **/__pycache__
+
+
+# Next.js
+# -------
+
+.next/
+node_modules/
