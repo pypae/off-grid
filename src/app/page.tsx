@@ -23,6 +23,7 @@ export default async function Page() {
             Click on the map to select a start- and endpoint to compute the path
             with the lowest avalanche risk between them.
           </p>
+          
         </div>
         <div className="grow">
           <Map posix={[46.802128, 9.833477]} />
