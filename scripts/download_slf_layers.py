@@ -32,12 +32,12 @@ def download_layer(source: gdal.Dataset, outfile: str, resample_factor=10):
 
 download_config = {
     # SLF Avalanche Terrain Hazard (ATH)
-    "ath": {
-        "wmts_url": "https://map.slf.ch/WMTSCapabilities.public.xml",
-        "layer_name": "ch.slf.terrainclassification-hom",
-        "tile_matrix_set_id": "2056",
-        "style": "default",
-    },
+    # "ath": {
+    #     "wmts_url": "https://map.slf.ch/WMTSCapabilities.public.xml",
+    #     "layer_name": "ch.slf.terrainclassification-hom",
+    #     "tile_matrix_set_id": "2056",
+    #     "style": "default",
+    # },
     # SLF Classified Avalanche Terrain (CAT) SLF
     "cat": {
         "wmts_url": "https://map.slf.ch/WMTSCapabilities.public.xml",

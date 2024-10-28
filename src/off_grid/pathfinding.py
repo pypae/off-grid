@@ -21,9 +21,17 @@ def heuristic(a: Location, b: Location) -> float:
 
 def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
     (x, y) = pixel
-    neighbors = [(x + 1, y), (x - 1, y), (x, y - 1), (x, y + 1)]  # E W N S
-    if (x + y) % 2 == 0:
-        neighbors.reverse()  # S N W E
+    # All possible moves: N, S, E, W, NE, NW, SE, SW
+    neighbors = [
+        (x + 1, y),  # East
+        (x - 1, y),  # West
+        (x, y - 1),  # North
+        (x, y + 1),  # South
+        (x + 1, y + 1),  # NE
+        (x - 1, y - 1),  # SW
+        (x + 1, y - 1),  # SE
+        (x - 1, y + 1),  # NW
+    ]
 
     def is_inbounds(pixel: Location) -> bool:
         row, col = pixel
@@ -31,7 +39,6 @@ def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
         return 0 <= row < nrows and 0 <= col < ncols
 
     result = filter(is_inbounds, neighbors)
-
     return list(result)
 
 
@@ -52,7 +59,13 @@ costs = [
 def cost(current: Location, next: Location, grid: np.ndarray) -> float:
     col, row = next
     features = grid[:, col, row]
-    return costs[features.item()]
+    base_cost = costs[features.item()]
+
+    # Determine if the move is diagonal by checking if both row and column changed
+    if abs(current[0] - next[0]) == 1 and abs(current[1] - next[1]) == 1:
+        return base_cost * 1.14  # Diagonal penalty
+    else:
+        return base_cost  # Orthogonal move cost
 
 
 def a_star_search(grid: np.ndarray, start: Location, goal: Location):

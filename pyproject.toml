@@ -38,6 +38,7 @@ dependencies = [
   "pyinstrument",
   "gdal",
   "owslib",
+  "fastapi[standard]",
 ]
 
 [project.urls]

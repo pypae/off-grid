@@ -3,7 +3,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/off-grid.svg)](https://pypi.org/project/off-grid)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/off-grid.svg)](https://pypi.org/project/off-grid)
 
------
+---
 
 ## Table of Contents
 
@@ -12,8 +12,16 @@
 
 ## Installation
 
-```console
-pip install off-grid
+### Prerequisites
+
+- `hatch``
+- `npm`
+
+### Download the data
+
+```
+hatch run python scripts/download_slf_layers.py
+./scripts/convert_cat.sh
 ```
 
 ## License
