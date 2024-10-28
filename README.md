@@ -7,22 +7,55 @@
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Usage](#usage)
+- [Deployment](#deployment)
 - [License](#license)
 
-## Installation
+## Usage
 
 ### Prerequisites
 
-- `hatch``
+- `hatch`
 - `npm`
 
-### Download the data
+### Backend
+
+1. Download the data.
 
 ```
 hatch run python scripts/download_slf_layers.py
 ./scripts/convert_cat.sh
 ```
+
+_Note: This will take a while, and download ~2GB of raster data._
+
+1. Start the fastapi dev server.
+
+```shell
+hatch run fastapi dev src/off_grid/main.py
+```
+
+Now you can have a look at the API docs at `localhost:8000/docs`.
+
+### Frontend
+
+1. Install the dependencies
+
+```shell
+npm install
+```
+
+1. Start the Next.js dev server.
+
+```shell
+npm run dev
+```
+
+Now you can visit the app at `localhost:3000`
+
+## Deployment
+
+// TODO
 
 ## License
 
