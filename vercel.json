@@ -19,10 +19,5 @@
       "src": "/(.*)",
       "dest": "src/app/$1"
     }
-  ],
-  "hooks": {
-    "build": {
-      "prebuild": "python scripts/download_slf_layers.py && ./scripts/convert_cat.sh"
-    }
-  }
+  ]
 }
