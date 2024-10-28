@@ -20,7 +20,7 @@ export default async function Page() {
             Demo — Pathfinding based on Classified Avalanche Terrain
           </h1>
           <p>
-            Click on the map to select a Start- and Endpoint to compute the path
+            Click on the map to select a start- and endpoint to compute the path
             with the lowest avalanche risk between them.
           </p>
         </div>
