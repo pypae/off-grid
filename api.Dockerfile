@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY ./scripts /code/scripts
 COPY ./data /code/data
 
-RUN wget https://storage.googleapis.com/off-grid-440012.appspot.com/data/ncat-10.tif 
+RUN wget -P ./data https://storage.googleapis.com/off-grid-440012.appspot.com/data/ncat-10.tif 
 
 COPY ./src/off_grid /code/src/off_grid
 
