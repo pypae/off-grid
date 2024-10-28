@@ -1,13 +1,8 @@
-from functools import lru_cache
-from pathlib import Path
 from typing import TypedDict
 
-import meshio
 import numpy as np
-import requests
 from pyproj import Transformer
 from scipy.interpolate import interp1d
-from shapely import LineString
 
 from off_grid.pathfinding import Location
 
@@ -35,8 +30,6 @@ def smooth_line_with_interp(coords: list, kind="cubic"):
 
 def smooth_line(coords: list[Location], tolerance=0.0001):
     """Smooth a ragged shortest path"""
-    line = LineString(coords)
-    # simplified_line = line.simplify(tolerance=tolerance)
     smooth_line = smooth_line_with_interp(coords)
     return list(smooth_line)
 
@@ -57,13 +50,3 @@ def convert_wgs84_to_lv95(location: Location) -> Location:
 
 class HeightResponse(TypedDict):
     height: str
-
-
-@lru_cache()
-def get_height(location: Location) -> float:
-    (x, y) = location
-    response = requests.get(
-        f"https://api3.geo.admin.ch/rest/services/height?easting={x}&northing={y}"
-    )
-    result: HeightResponse = response.json()
-    return float(result["height"])

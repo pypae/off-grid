@@ -1,10 +1,8 @@
-from typing import List
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from off_grid.pathfinding import Location, compute_path
+from off_grid.pathfinding import compute_path
 from off_grid.util import convert_lv95_to_wgs84, convert_wgs84_to_lv95, smooth_line
 
 app = FastAPI()

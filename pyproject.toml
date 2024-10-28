@@ -25,19 +25,11 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "streamlit",
-  "streamlit-folium",
-  "folium",
-  "requests",
-  "pyproj",
-  "matplotlib",
   "rasterio",
   "numpy",
-  "pydelatin >= 0.2.8",
-  "shapely",
-  "pyinstrument",
+  "scipy",
+  "pyproj",
   "gdal",
-  "owslib",
   "fastapi[standard]",
 ]
 
