@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/app/**/*.ts?(x)",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "src/off_grid/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/off_grid/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/app/$1"
+    }
+  ],
+  "hooks": {
+    "build": {
+      "prebuild": "python scripts/download_slf_layers.py && ./scripts/convert_cat.sh"
+    }
+  }
+}
