@@ -1,0 +1,25 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: app.Dockerfile
+      args:
+        - NEXT_ENV_API_URL="http://localhost:8000"
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /code
+  api:
+    build: 
+      context: .
+      dockerfile: api.Dockerfile
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /code

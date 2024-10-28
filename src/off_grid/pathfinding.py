@@ -7,19 +7,22 @@ import rasterio
 import rasterio.transform
 import rasterio.windows
 
-Location = tuple[int, int]
+Number = float | int
+
+Location = tuple[Number, Number]
+RowCol = tuple[int, int]
 
 here = Path(__file__).parent
 cat_path = here / "../../data/ncat-10.tif"
 
 
-def heuristic(a: Location, b: Location) -> float:
+def heuristic(a: RowCol, b: RowCol) -> float:
     (x1, y1) = a
     (x2, y2) = b
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
+def neighbors(pixel: RowCol, grid: np.ndarray) -> list[RowCol]:
     (x, y) = pixel
     # All possible moves: N, S, E, W, NE, NW, SE, SW
     neighbors = [
@@ -33,7 +36,7 @@ def neighbors(pixel: Location, grid: np.ndarray) -> list[Location]:
         (x - 1, y + 1),  # NW
     ]
 
-    def is_inbounds(pixel: Location) -> bool:
+    def is_inbounds(pixel: RowCol) -> bool:
         row, col = pixel
         _, nrows, ncols = grid.shape
         return 0 <= row < nrows and 0 <= col < ncols
@@ -56,7 +59,8 @@ costs = [
 ]
 
 
-def cost(current: Location, next: Location, grid: np.ndarray) -> float:
+def cost(current: RowCol, next: RowCol, grid: np.ndarray) -> float:
+    print(next)
     col, row = next
     features = grid[:, col, row]
     base_cost = costs[features.item()]
@@ -68,10 +72,10 @@ def cost(current: Location, next: Location, grid: np.ndarray) -> float:
         return base_cost  # Orthogonal move cost
 
 
-def a_star_search(grid: np.ndarray, start: Location, goal: Location):
-    frontier: list[tuple[float, Location]] = []
+def a_star_search(grid: np.ndarray, start: RowCol, goal: RowCol):
+    frontier: list[tuple[float, RowCol]] = []
     heapq.heappush(frontier, (0, start))
-    came_from: dict[Location, tuple[Location | None, float]] = {start: (None, 0)}
+    came_from: dict[RowCol, tuple[RowCol | None, float]] = {start: (None, 0)}
 
     while frontier:
         priority, current = heapq.heappop(frontier)
@@ -91,12 +95,12 @@ def a_star_search(grid: np.ndarray, start: Location, goal: Location):
 
 
 def reconstruct_path(
-    came_from: dict[Location, tuple[Location | None, float]],
-    start: Location,
-    goal: Location,
-) -> list[Location]:
-    current: Location | None = goal
-    path: list[Location] = []
+    came_from: dict[RowCol, tuple[RowCol | None, float]],
+    start: RowCol,
+    goal: RowCol,
+) -> list[RowCol]:
+    current: RowCol | None = goal
+    path: list[RowCol] = []
     if goal not in came_from:  # no path was found
         return []
     while current is not None:
@@ -153,13 +157,18 @@ def compute_path(start: Location, end: Location) -> list[Location]:
         window = get_window(s, e, border_width=100)
         window_transform = i.window_transform(window)
         cat_data = i.read(window=window)
+
         window_start = rasterio.transform.rowcol(window_transform, *start)
         window_end = rasterio.transform.rowcol(window_transform, *end)
 
+        # Convert Tuple[float, float] to Tuple[int,int], so we can use them in numpy slices.
+        window_start_rowcol = tuple(map(int, window_start))
+        window_end_rowcol = tuple(map(int, window_end))
+
         # write_window(cat_data, window, i, "test.tif")
 
-    came_from, _ = a_star_search(cat_data, window_start, window_end)
-    shortest_path = reconstruct_path(came_from, window_start, window_end)
+    came_from, _ = a_star_search(cat_data, window_start_rowcol, window_end_rowcol)
+    shortest_path = reconstruct_path(came_from, window_start_rowcol, window_end_rowcol)
 
     # Transform the path from pixel units back to coordinates.
     shortest_path = [

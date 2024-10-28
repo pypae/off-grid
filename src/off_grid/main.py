@@ -12,6 +12,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "https://off-grid-app-585848874375.europe-west6.run.app",
 ]
 
 app.add_middleware(

@@ -36,7 +36,10 @@ function ShortestPath({ setLoading }: ShortestPathProps) {
     if (start && end) {
       setLoading(true);
 
-      fetch("http://localhost:8000/shortest-path", {
+
+    const apiUrl = process.env.NEXT_ENV_API_URL || "http://localhost:8000"
+
+      fetch(`${apiUrl}/shortest-path`, {
         method: "POST",
         body: JSON.stringify({ start, end }),
         headers: {
