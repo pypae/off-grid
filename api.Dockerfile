@@ -18,7 +18,9 @@ RUN wget https://storage.googleapis.com/off-grid-440012.appspot.com/data/ncat-10
 
 COPY ./src/off_grid /code/src/off_grid
 
-CMD ["fastapi", "run", "src/off_grid/main.py", "--port", "80"]
+ENV PORT=8000
+
+CMD exec fastapi run src/off_grid/main.py --port $PORT
 
 # If running behind a proxy like Nginx or Traefik add --proxy-headers
 # CMD ["fastapi", "run", "app/main.py", "--port", "80", "--proxy-headers"]
