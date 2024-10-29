@@ -6,13 +6,17 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import {
   LayerGroup,
+  LayersControl,
   MapContainer,
   Marker,
   Polyline,
   Popup,
   TileLayer,
+  WMSTileLayer,
   useMapEvents,
 } from "react-leaflet";
+
+const { BaseLayer, Overlay } = LayersControl; // Destructure BaseLayer and Overlay
 
 interface MapProps {
   posix: LatLngExpression | LatLngTuple;
@@ -119,15 +123,31 @@ const Map = ({ posix, zoom = defaults.zoom }: MapProps) => {
         zoom={zoom}
         style={{ height: "100%", width: "100%" }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>'
-          url="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
-        />
-        <TileLayer
-          attribution='&copy; <a href="https://www.slf.ch/">SLF</a>'
-          url="https://map.slf.ch/public/mapcache/wmts/1.0.0/ch.slf.terrainclassification-hybr/default/GoogleMapsCompatible/{z}/{y}/{x}.png"
-          opacity={0.5}
-        />
+        <LayersControl position="topright">
+          <BaseLayer checked name="Base Map Winter">
+            <TileLayer
+              attribution='&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>'
+              url="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
+            />
+          </BaseLayer>
+          <Overlay checked name="Categorical Avalanche Terrain">
+            <TileLayer
+              attribution='&copy; <a href="https://www.slf.ch/">SLF</a>'
+              url="https://map.slf.ch/public/mapcache/wmts/1.0.0/ch.slf.terrainclassification-hybr/default/GoogleMapsCompatible/{z}/{y}/{x}.png"
+              opacity={0.5}
+            />
+          </Overlay>
+          <Overlay name="Ski routes">
+            <WMSTileLayer
+              url="https://wms.geo.admin.ch/"
+              layers="ch.swisstopo-karto.skitouren"
+              format="image/png"
+              transparent={true}
+              opacity={0.3}
+              attribution='&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>'
+            />
+          </Overlay>
+        </LayersControl>
         <ShortestPath setLoading={setLoading} />
       </MapContainer>
     </div>
