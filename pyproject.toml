@@ -34,9 +34,9 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/Patrick Düggelin/off-grid#readme"
-Issues = "https://github.com/Patrick Düggelin/off-grid/issues"
-Source = "https://github.com/Patrick Düggelin/off-grid"
+Documentation = "https://github.com/pypae/off-grid#readme"
+Issues = "https://github.com/pypae/off-grid/issues"
+Source = "https://github.com/pypae/off-grid"
 
 [tool.hatch.version]
 path = "src/off_grid/__about__.py"

@@ -14,6 +14,7 @@ RowCol = tuple[int, int]
 
 here = Path(__file__).parent
 cat_path = here / "../../data/ncat-10.tif"
+ski_routes_mask_path = here / "../../data/ski_routes_mask.tif"
 
 
 def heuristic(a: RowCol, b: RowCol) -> float:
@@ -47,20 +48,20 @@ def neighbors(pixel: RowCol, grid: np.ndarray) -> list[RowCol]:
 
 costs = [
     1,
-    10,
-    20,
-    30,
-    100,
-    200,
-    400,
-    800,
-    5000,
-    10000,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    16,
+    32,
+    1,  # Ski routes cost
 ]
 
 
 def cost(current: RowCol, next: RowCol, grid: np.ndarray) -> float:
-    print(next)
     col, row = next
     features = grid[:, col, row]
     base_cost = costs[features.item()]
@@ -167,7 +168,14 @@ def compute_path(start: Location, end: Location) -> list[Location]:
 
         # write_window(cat_data, window, i, "test.tif")
 
-    came_from, _ = a_star_search(cat_data, window_start_rowcol, window_end_rowcol)
+    # Load the ski routes mask with the same window
+    with rasterio.open(ski_routes_mask_path) as mask_file:
+        mask_data = mask_file.read(window=window)
+
+    # Where mask is 1 (ski routes), use cost index 10; otherwise use original cat_data
+    grid = np.where(mask_data == 1, 10, cat_data)
+
+    came_from, _ = a_star_search(grid, window_start_rowcol, window_end_rowcol)
     shortest_path = reconstruct_path(came_from, window_start_rowcol, window_end_rowcol)
 
     # Transform the path from pixel units back to coordinates.

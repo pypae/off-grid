@@ -67,6 +67,10 @@ This project has both backend and frontend components. It requires a Python envi
    wget -P ./data https://storage.googleapis.com/off-grid-440012.appspot.com/data/ncat-10.tif
    ```
 
+   ```bash
+   wget -P ./data https://storage.googleapis.com/off-grid-440012.appspot.com/data/ ski_routes_mask.tif 
+   ```
+
    > **Note**: More information on the dataset can be found in the [How it works](#how-it-works) section.
 
 2. **Install GDAL**  
