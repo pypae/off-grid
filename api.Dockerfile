@@ -15,6 +15,7 @@ COPY ./scripts /code/scripts
 COPY ./data /code/data
 
 RUN wget -P ./data https://storage.googleapis.com/off-grid-440012.appspot.com/data/ncat-10.tif 
+RUN wget -P ./data https://storage.googleapis.com/off-grid-440012.appspot.com/data/ski_routes_mask.tif 
 
 COPY ./src/off_grid /code/src/off_grid
 
